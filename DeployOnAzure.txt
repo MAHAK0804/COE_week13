@@ -1,0 +1,17 @@
+Steps to deploy on azure:
+
+1. Install Azure CLI: Make sure you have the Azure CLI installed and logged in.
+2. Create an Azure Container Registry (ACR): To store the Docker image.
+        az acr create --resource-group <your-resource-group> --name <your-acr-name> --sku Basic
+        az acr login --name <your-acr-name>
+3. Build and Push the Docker Image to ACR:
+        docker build -t <your-acr-name>.azurecr.io/flask-gpt-api:latest .
+        docker push <your-acr-name>.azurecr.io/flask-gpt-api:latest
+4. Create an Azure Web App for Containers:
+        az webapp create --resource-group <your-resource-group> --plan <your-app-service-plan> --name <your-app-name> --deployment-container-image-name <your-acr-name>.azurecr.io/flask-gpt-api:latest
+5. Configure the Web App:
+        az webapp config container set --name <your-app-name> --resource-group <your-resource-group> --docker-custom-image-name <your-acr-name>.azurecr.io/flask-gpt-api:latest
+6. Set Environment Variables (like API Keys):
+        az webapp config appsettings set --name <your-app-name> --resource-group <your-resource-group> --settings OPENAI_API_KEY=<your-openai-api-key>
+7. Browse to the App: Once deployed, you can access your Flask API by navigating to https://<your-app-name>.azurewebsites.net/api/gpt4.
+
